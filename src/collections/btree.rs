@@ -3,25 +3,28 @@ use crate::update::Update;
 use std::collections::BTreeSet;
 use std::iter::FromIterator;
 
-pub struct BTreeSetStore<T: Ord + Clone> {
+pub struct BTreeSetStore<T> {
     set: BTreeSet<T>,
 }
 
-impl<T: Ord + Clone> BTreeSetStore<T> {
+impl<T> BTreeSetStore<T> {
     pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl<T> Default for BTreeSetStore<T> {
+    fn default() -> Self {
         BTreeSetStore {
             set: BTreeSet::new(),
         }
     }
 }
 
-impl<T: Ord + Clone> Default for BTreeSetStore<T> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl<T: Ord + Clone> Set<T> for BTreeSetStore<T> {
+impl<T> Set<T> for BTreeSetStore<T>
+where
+    T: Ord + Clone,
+{
     fn apply_changes(&mut self, changes: Vec<Update<T>>) {
         for change in changes {
             match change {
@@ -40,8 +43,14 @@ impl<T: Ord + Clone> Set<T> for BTreeSetStore<T> {
     }
 }
 
-impl<T: Ord + Clone> FromIterator<T> for BTreeSetStore<T> {
-    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+impl<T> FromIterator<T> for BTreeSetStore<T>
+where
+    T: Ord,
+{
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = T>,
+    {
         BTreeSetStore {
             set: BTreeSet::from_iter(iter),
         }
