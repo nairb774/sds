@@ -34,9 +34,12 @@ where
         input_changes
             .iter()
             .flat_map(|change| {
-                (self.f)(change.item().clone())
-                    .into_iter()
-                    .map(move |item| change.as_ref().map(|_| item))
+                (self.f)(change.item.clone()).into_iter().map(move |item| {
+                    Update {
+                        item,
+                        diff: change.diff,
+                    }
+                })
             })
             .collect()
     }

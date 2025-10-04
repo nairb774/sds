@@ -32,13 +32,10 @@ where
 
     fn apply_changes(&mut self, changes: Vec<Update<T>>) {
         for change in changes {
-            match change {
-                Update::Add(value) => {
-                    self.set.insert(value);
-                }
-                Update::Remove(value) => {
-                    self.set.remove(&value);
-                }
+            if change.diff.get() > 0 {
+                self.set.insert(change.item);
+            } else {
+                self.set.remove(&change.item);
             }
         }
     }

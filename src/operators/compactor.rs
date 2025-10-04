@@ -1,6 +1,7 @@
 use crate::update::Update;
 use std::collections::HashMap;
 use std::hash::Hash;
+use std::num::NonZeroIsize;
 
 pub fn compact<T, I>(input: I) -> Vec<Update<T>>
 where
@@ -9,23 +10,13 @@ where
 {
     let mut counts = HashMap::new();
     for update in input.into_iter() {
-        match update {
-            Update::Add(item) => *counts.entry(item).or_insert(0) += 1,
-            Update::Remove(item) => *counts.entry(item).or_insert(0) -= 1,
-        }
+        *counts.entry(update.item).or_insert(0) += update.diff.get();
     }
 
-    let mut output = Vec::new();
-    for (item, count) in counts.drain() {
-        if count > 0 {
-            for _ in 0..count {
-                output.push(Update::Add(item.clone()));
-            }
-        } else if count < 0 {
-            for _ in 0..-count {
-                output.push(Update::Remove(item.clone()));
-            }
-        }
-    }
-    output
+    counts
+        .into_iter()
+        .filter_map(|(item, diff)| {
+            NonZeroIsize::new(diff).map(|diff| Update { item, diff })
+        })
+        .collect()
 }

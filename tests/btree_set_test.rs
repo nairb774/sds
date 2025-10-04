@@ -7,10 +7,10 @@ fn test_btree_set_store_apply_changes() {
     let mut store = BTreeSetStore::new();
 
     let changes = vec![
-        Update::Add(1),
-        Update::Add(2),
-        Update::Add(3),
-        Update::Add(2), // Duplicate add
+        Update::add(1),
+        Update::add(2),
+        Update::add(3),
+        Update::add(2), // Duplicate add
     ];
     store.apply_changes(changes);
 
@@ -18,7 +18,7 @@ fn test_btree_set_store_apply_changes() {
     items.sort();
     assert_eq!(items, vec![1, 2, 3]);
 
-    let changes = vec![Update::Remove(2), Update::Remove(4)]; // Remove existing and non-existing
+    let changes = vec![Update::remove(2), Update::remove(4)]; // Remove existing and non-existing
     store.apply_changes(changes);
 
     let mut items: Vec<_> = store.iter().cloned().collect();
