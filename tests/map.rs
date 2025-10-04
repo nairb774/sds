@@ -8,7 +8,7 @@ fn test_map_operator() {
     let mut map_op = Map::new(|x: i32| x.to_string());
 
     let changes = vec![Update::add(1), Update::remove(2), Update::add(3)];
-    let output = map_op.process_changes(&changes);
+    let output = map_op.process_changes(changes);
 
     assert_eq!(
         output,
@@ -21,7 +21,7 @@ fn test_map_operator() {
 
     // Test with an empty input
     let changes: Vec<Update<i32>> = vec![];
-    let output = map_op.process_changes(&changes);
+    let output = map_op.process_changes(changes);
     assert!(output.is_empty());
 }
 
@@ -31,7 +31,7 @@ fn test_map_operator_with_duplicates() {
     let mut map_op = Map::new(|x: i32| x / 2);
 
     let changes = vec![Update::add(2), Update::add(3), Update::remove(5)];
-    let output = map_op.process_changes(&changes);
+    let output = map_op.process_changes(changes);
 
     // The output should contain duplicates, as the map operator does not compact.
     // 2 -> 1, 3 -> 1, 5 -> 2

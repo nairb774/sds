@@ -24,14 +24,12 @@ where
 
 impl<T, F> Operator<T, T> for Filter<T, F>
 where
-    T: Clone,
     F: Fn(&T) -> bool,
 {
-    fn process_changes(&mut self, input_changes: &[Update<T>]) -> Vec<Update<T>> {
+    fn process_changes(&mut self, input_changes: Vec<Update<T>>) -> Vec<Update<T>> {
         input_changes
-            .iter()
+            .into_iter()
             .filter(|change| (self.predicate)(change.item()))
-            .cloned()
             .collect()
     }
 }
