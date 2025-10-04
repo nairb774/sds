@@ -26,17 +26,17 @@ where
 
 impl<In, Out, F, I> Operator<In, Out> for FlatMap<In, Out, F, I>
 where
-    In: Clone,
     F: Fn(In) -> I,
     I: IntoIterator<Item = Out>,
 {
-    fn process_changes(&mut self, input_changes: &[Update<In>]) -> Vec<Update<Out>> {
+    fn process_changes(&mut self, input_changes: Vec<Update<In>>) -> Vec<Update<Out>> {
         input_changes
-            .iter()
+            .into_iter()
             .flat_map(|change| {
-                (self.f)(change.item().clone())
+                let diff = change.diff;
+                (self.f)(change.item)
                     .into_iter()
-                    .map(move |item| change.as_ref().map(|_| item))
+                    .map(move |item| Update { item, diff })
             })
             .collect()
     }

@@ -8,27 +8,27 @@ fn test_stateless_filter_operator() {
 
     // A mix of even and odd numbers for both Add and Remove
     let changes = vec![
-        Update::Add(1),
-        Update::Add(2),
-        Update::Remove(3),
-        Update::Remove(4),
-        Update::Add(6),
+        Update::add(1),
+        Update::add(2),
+        Update::remove(3),
+        Update::remove(4),
+        Update::add(6),
     ];
-    let output = filter.process_changes(&changes);
+    let output = filter.process_changes(changes);
 
     // Only the updates with even numbers should pass through
     assert_eq!(
         output,
-        vec![Update::Add(2), Update::Remove(4), Update::Add(6)]
+        vec![Update::add(2), Update::remove(4), Update::add(6)]
     );
 
     // Test with no items matching the predicate
-    let changes = vec![Update::Add(1), Update::Remove(3)];
-    let output = filter.process_changes(&changes);
+    let changes = vec![Update::add(1), Update::remove(3)];
+    let output = filter.process_changes(changes);
     assert!(output.is_empty());
 
     // Test with an empty input
     let changes: Vec<Update<i32>> = vec![];
-    let output = filter.process_changes(&changes);
+    let output = filter.process_changes(changes);
     assert!(output.is_empty());
 }

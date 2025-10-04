@@ -1,14 +1,23 @@
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub enum Update<T> {
-    Add(T),
-    Remove(T),
+use std::num::NonZeroIsize;
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Update<T> {
+    pub item: T,
+    pub diff: NonZeroIsize,
 }
 
 impl<T> Update<T> {
-    pub fn as_ref(&self) -> Update<&T> {
-        match self {
-            Update::Add(item) => Update::Add(item),
-            Update::Remove(item) => Update::Remove(item),
+    pub fn add(item: T) -> Self {
+        Update {
+            item,
+            diff: NonZeroIsize::new(1).unwrap(),
+        }
+    }
+
+    pub fn remove(item: T) -> Self {
+        Update {
+            item,
+            diff: NonZeroIsize::new(-1).unwrap(),
         }
     }
 
@@ -16,16 +25,13 @@ impl<T> Update<T> {
     where
         F: FnOnce(T) -> U,
     {
-        match self {
-            Update::Add(item) => Update::Add(f(item)),
-            Update::Remove(item) => Update::Remove(f(item)),
+        Update {
+            item: f(self.item),
+            diff: self.diff,
         }
     }
 
     pub fn item(&self) -> &T {
-        match self {
-            Update::Add(item) => item,
-            Update::Remove(item) => item,
-        }
+        &self.item
     }
 }

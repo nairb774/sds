@@ -24,13 +24,12 @@ where
 
 impl<In, Out, F> Operator<In, Out> for Map<In, Out, F>
 where
-    In: Clone,
     F: Fn(In) -> Out,
 {
-    fn process_changes(&mut self, input_changes: &[Update<In>]) -> Vec<Update<Out>> {
+    fn process_changes(&mut self, input_changes: Vec<Update<In>>) -> Vec<Update<Out>> {
         input_changes
-            .iter()
-            .map(|change| change.clone().map(|item| (self.f)(item)))
+            .into_iter()
+            .map(|change| change.map(|item| (self.f)(item)))
             .collect()
     }
 }
