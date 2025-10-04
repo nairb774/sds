@@ -25,6 +25,8 @@ impl<T> Set<T> for BTreeSetStore<T>
 where
     T: Ord + Clone,
 {
+    type Iter<'a> = std::collections::btree_set::Iter<'a, T> where T: 'a;
+
     fn apply_changes(&mut self, changes: Vec<Update<T>>) {
         for change in changes {
             match change {
@@ -38,8 +40,8 @@ where
         }
     }
 
-    fn iter(&self) -> Box<dyn Iterator<Item = &T> + '_> {
-        Box::new(self.set.iter())
+    fn iter<'a>(&'a self) -> Self::Iter<'a> {
+        self.set.iter()
     }
 }
 
