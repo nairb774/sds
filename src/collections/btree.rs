@@ -25,7 +25,10 @@ impl<T> Set<T> for BTreeSetStore<T>
 where
     T: Ord + Clone,
 {
-    type Iter<'a> = std::collections::btree_set::Iter<'a, T> where T: 'a;
+    type Iter<'a>
+        = std::collections::btree_set::Iter<'a, T>
+    where
+        T: 'a;
 
     fn apply_changes(&mut self, changes: Vec<Update<T>>) {
         for change in changes {
