@@ -33,14 +33,26 @@ fn test_compactor_reversed_cancellation() {
 fn test_compactor_multi_add() {
     let updates = vec![Update::add(1), Update::add(1), Update::remove(1)];
     let compacted = compact(updates);
-    assert_set_eq(&compacted, &[Update { item: 1, diff: nz(1) }]);
+    assert_set_eq(
+        &compacted,
+        &[Update {
+            item: 1,
+            diff: nz(1),
+        }],
+    );
 }
 
 #[test]
 fn test_compactor_multi_remove() {
     let updates = vec![Update::add(1), Update::remove(1), Update::remove(1)];
     let compacted = compact(updates);
-    assert_set_eq(&compacted, &[Update { item: 1, diff: nz(-1) }]);
+    assert_set_eq(
+        &compacted,
+        &[Update {
+            item: 1,
+            diff: nz(-1),
+        }],
+    );
 }
 
 #[test]
@@ -56,16 +68,34 @@ fn test_compactor_multiple_items() {
     let compacted = compact(updates);
     assert_set_eq(
         &compacted,
-        &[Update { item: 2, diff: nz(1) }, Update { item: 3, diff: nz(1) }],
+        &[
+            Update {
+                item: 2,
+                diff: nz(1),
+            },
+            Update {
+                item: 3,
+                diff: nz(1),
+            },
+        ],
     );
 }
 
 #[test]
 fn test_compactor_no_cancellations() {
     let updates = vec![
-        Update { item: 1, diff: nz(1) },
-        Update { item: 2, diff: nz(1) },
-        Update { item: 3, diff: nz(-1) },
+        Update {
+            item: 1,
+            diff: nz(1),
+        },
+        Update {
+            item: 2,
+            diff: nz(1),
+        },
+        Update {
+            item: 3,
+            diff: nz(-1),
+        },
     ];
     let compacted = compact(updates.clone());
     assert_set_eq(&compacted, &updates);
@@ -81,19 +111,43 @@ fn test_compactor_empty_input() {
 #[test]
 fn test_compactor_complex_counts() {
     let updates = vec![
-        Update { item: 1, diff: nz(2) },
-        Update { item: 1, diff: nz(-1) },
-        Update { item: 2, diff: nz(-3) },
-        Update { item: 2, diff: nz(2) },
-        Update { item: 3, diff: nz(5) },
-        Update { item: 3, diff: nz(-5) },
+        Update {
+            item: 1,
+            diff: nz(2),
+        },
+        Update {
+            item: 1,
+            diff: nz(-1),
+        },
+        Update {
+            item: 2,
+            diff: nz(-3),
+        },
+        Update {
+            item: 2,
+            diff: nz(2),
+        },
+        Update {
+            item: 3,
+            diff: nz(5),
+        },
+        Update {
+            item: 3,
+            diff: nz(-5),
+        },
     ];
     let compacted = compact(updates);
     assert_set_eq(
         &compacted,
         &[
-            Update { item: 1, diff: nz(1) },
-            Update { item: 2, diff: nz(-1) },
+            Update {
+                item: 1,
+                diff: nz(1),
+            },
+            Update {
+                item: 2,
+                diff: nz(-1),
+            },
         ],
     );
 }

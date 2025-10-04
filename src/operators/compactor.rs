@@ -15,8 +15,6 @@ where
 
     counts
         .into_iter()
-        .filter_map(|(item, diff)| {
-            NonZeroIsize::new(diff).map(|diff| Update { item, diff })
-        })
+        .filter_map(|(item, diff)| NonZeroIsize::new(diff).map(|diff| Update { item, diff }))
         .collect()
 }

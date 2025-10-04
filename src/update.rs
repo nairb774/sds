@@ -8,11 +8,17 @@ pub struct Update<T> {
 
 impl<T> Update<T> {
     pub fn add(item: T) -> Self {
-        Update { item, diff: NonZeroIsize::new(1).unwrap() }
+        Update {
+            item,
+            diff: NonZeroIsize::new(1).unwrap(),
+        }
     }
 
     pub fn remove(item: T) -> Self {
-        Update { item, diff: NonZeroIsize::new(-1).unwrap() }
+        Update {
+            item,
+            diff: NonZeroIsize::new(-1).unwrap(),
+        }
     }
 
     pub fn map<U, F>(self, f: F) -> Update<U>

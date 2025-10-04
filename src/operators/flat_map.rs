@@ -34,12 +34,9 @@ where
             .into_iter()
             .flat_map(|change| {
                 let diff = change.diff;
-                (self.f)(change.item).into_iter().map(move |item| {
-                    Update {
-                        item,
-                        diff,
-                    }
-                })
+                (self.f)(change.item)
+                    .into_iter()
+                    .map(move |item| Update { item, diff })
             })
             .collect()
     }
