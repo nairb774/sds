@@ -60,8 +60,7 @@ where
             }
         }
 
-        let mut old_top_items = BTreeMap::new();
-        mem::swap(&mut self.top_items, &mut old_top_items);
+        let old_top_items = mem::take(&mut self.top_items);
 
         let mut n_collected = 0;
 
