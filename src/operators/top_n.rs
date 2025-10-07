@@ -1,6 +1,8 @@
 use crate::operator::Operator;
 use crate::update::Update;
+use std::collections::btree_map::Entry;
 use std::collections::BTreeMap;
+use std::mem;
 
 pub struct TopN<T>
 where
@@ -38,23 +40,29 @@ where
             let Update { item, diff } = change;
             let diff = diff.get();
 
-            let entry = self.all_items.entry(item);
-            let key = entry.key().clone();
-            let count = entry.or_insert(0);
-
-            if diff > 0 {
-                *count += diff as usize;
-            } else {
-                *count = count.saturating_sub((-diff) as usize);
-            }
-
-            if *count == 0 {
-                self.all_items.remove(&key);
+            match self.all_items.entry(item) {
+                Entry::Occupied(mut entry) => {
+                    let count = entry.get_mut();
+                    if diff > 0 {
+                        *count += diff as usize;
+                    } else {
+                        *count = count.saturating_sub((-diff) as usize);
+                    }
+                    if *count == 0 {
+                        entry.remove();
+                    }
+                }
+                Entry::Vacant(entry) => {
+                    if diff > 0 {
+                        entry.insert(diff as usize);
+                    }
+                }
             }
         }
 
-        let old_top_items = self.top_items.clone();
-        let mut new_top_items = BTreeMap::new();
+        let mut old_top_items = BTreeMap::new();
+        mem::swap(&mut self.top_items, &mut old_top_items);
+
         let mut n_collected = 0;
 
         // Determine the new set of top N items.
@@ -64,10 +72,9 @@ where
             }
             let can_take = self.n - n_collected;
             let taking = std::cmp::min(can_take, count);
-            new_top_items.insert(item.clone(), taking);
+            self.top_items.insert(item.clone(), taking);
             n_collected += taking;
         }
-        self.top_items = new_top_items;
 
         let mut output_changes = Vec::new();
 
