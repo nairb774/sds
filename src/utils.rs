@@ -41,18 +41,26 @@ where
                     match item1.cmp(item2) {
                         Less => {
                             let (item, count) = self.iter1.next().unwrap();
-                            let diff = NonZeroIsize::new(-(count as isize)).unwrap();
+                            let count_isize =
+                                isize::try_from(count).expect("count value too large for isize");
+                            let diff = NonZeroIsize::new(-count_isize).unwrap();
                             return Some(Update { item, diff });
                         }
                         Greater => {
                             let (item, count) = self.iter2.next().unwrap();
-                            let diff = NonZeroIsize::new(count as isize).unwrap();
+                            let count_isize =
+                                isize::try_from(count).expect("count value too large for isize");
+                            let diff = NonZeroIsize::new(count_isize).unwrap();
                             return Some(Update { item, diff });
                         }
                         Equal => {
                             let (item1, count1) = self.iter1.next().unwrap();
                             let (_item2, count2) = self.iter2.next().unwrap();
-                            let diff = count2 as isize - count1 as isize;
+                            let count1_isize =
+                                isize::try_from(count1).expect("count1 value too large for isize");
+                            let count2_isize =
+                                isize::try_from(count2).expect("count2 value too large for isize");
+                            let diff = count2_isize - count1_isize;
                             if let Some(diff) = NonZeroIsize::new(diff) {
                                 return Some(Update { item: item1, diff });
                             }
@@ -61,12 +69,16 @@ where
                 }
                 (Some(_), None) => {
                     let (item, count) = self.iter1.next().unwrap();
-                    let diff = NonZeroIsize::new(-(count as isize)).unwrap();
+                    let count_isize =
+                        isize::try_from(count).expect("count value too large for isize");
+                    let diff = NonZeroIsize::new(-count_isize).unwrap();
                     return Some(Update { item, diff });
                 }
                 (None, Some(_)) => {
                     let (item, count) = self.iter2.next().unwrap();
-                    let diff = NonZeroIsize::new(count as isize).unwrap();
+                    let count_isize =
+                        isize::try_from(count).expect("count value too large for isize");
+                    let diff = NonZeroIsize::new(count_isize).unwrap();
                     return Some(Update { item, diff });
                 }
                 (None, None) => return None,
