@@ -1,0 +1,7 @@
+// .github/renovate.json5
+{
+  "extends": [
+    "config:base",
+    ":pinGitHubActionDigests"
+  ]
+}
